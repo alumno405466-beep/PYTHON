@@ -43,25 +43,25 @@ def asistencia(id = None):
 
 
 @app.get("/notas")
-def notas(id = None, nota = None):
-    todasnotas = ["Parcial1", "Parcial2", "Ordinario1", "Practicas", "OrdinarioPracticas"]
+def notas(id = None, evaluacion = None):
+    evaluacion = ["Parcial1", "Parcial2", "Ordinario1", "Practicas", "OrdinarioPracticas"]
 
-    if id is None or nota is None:
+    if id is None or evaluacion is None:
         return {
             "mensaje": "Campos sin rellenar",
-            "ejemplo": "/notas?id=1001&nota=Parcial1",
-            "notasdisponibles": todasnotas
+            "ejemplo": "/notas?id=1001&evaluacion=Parcial1",
+            "notasdisponibles": evaluacion
         }
 
     alumno = df[df["ID"] == int(id)]
 
     nombrecompleto = f"{alumno.iloc[0]['Nombre']} {alumno.iloc[0]['Apellidos']}"
-    calificacion = alumno.iloc[0][nota]
+    nota = alumno.iloc[0][evaluacion]
 
-    calificacion = float(calificacion)
+    nota = float(nota)
 
     return {
         "alumno": nombrecompleto,
-        "nota": nota,
-        "calificacion": calificacion
+        "evaluacion": evaluacion,
+        "nota": nota
     }
