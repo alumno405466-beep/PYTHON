@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Buscar en Wikipedia{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white/70 rounded-xl border border-gris-claro shadow-md p-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+            <i class="bi bi-search mr-2"></i>Buscar en Wikipedia
+        </h1>
+        
+        <form method="POST">
+            <div class="mb-6">
+                <label class="block text-gray-700 font-semibold mb-2">Título del artículo</label>
+                <input type="text" name="titulo_busqueda" 
+                       class="w-full p-3 border-2 border-gris-claro rounded-lg focus:border-primary focus:outline-none bg-white"
+                       placeholder="Ej: Albert Einstein, Gaudí, Barcelona..." required>
+            </div>
+            
+            <button type="submit" 
+                    class="w-full py-3 bg-primary text-beige-light rounded-lg hover:bg-gray-900 transition-all font-semibold flex items-center justify-center">
+                <i class="bi bi-search mr-2"></i> Buscar en Wikipedia
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

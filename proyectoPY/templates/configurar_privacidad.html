@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Configurar Privacidad{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white/70 rounded-xl border border-gris-claro shadow-md p-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">
+            <i class="bi bi-shield-lock mr-2"></i>Configurar Privacidad
+        </h1>
+        
+        <p class="text-gray-600 mb-6">
+            Controla quién puede ver los artículos de tu colección. Puedes cambiar esta configuración en cualquier momento.
+        </p>
+        
+        <div class="bg-beige-light p-6 rounded-lg mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Estado actual</h2>
+            
+            <div class="flex items-center space-x-4 mb-4">
+                <div class="text-6xl">
+                    {% if coleccion_publica %}
+                        <i class="bi bi-globe text-primary"></i>
+                    {% else %}
+                        <i class="bi bi-lock-fill text-gray-600"></i>
+                    {% endif %}
+                </div>
+                <div>
+                    <p class="text-lg">
+                        <strong>Tu colección es:</strong> 
+                        <span class="{% if coleccion_publica %}text-primary{% else %}text-gray-600{% endif %} font-bold">
+                            {% if coleccion_publica %}PÚBLICA{% else %}PRIVADA{% endif %}
+                        </span>
+                    </p>
+                    <p class="text-gray-600">
+                        {% if coleccion_publica %}
+                            Todos los usuarios pueden ver tus artículos en la colección pública.
+                        {% else %}
+                            Solo tú puedes ver tus artículos (a menos que los marques individualmente como públicos).
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <form method="POST" class="space-y-6">
+            <div class="space-y-3">
+                <label class="flex items-center space-x-3 p-4 border-2 rounded-lg cursor-pointer transition-all {% if coleccion_publica %}border-primary bg-beige-light{% else %}border-gris-claro{% endif %}">
+                    <input type="radio" name="coleccion_publica" value="true" class="w-5 h-5" 
+                           {% if coleccion_publica %}checked{% endif %}>
+                    <div>
+                        <span class="font-semibold text-gray-800">Colección Pública</span>
+                        <p class="text-sm text-gray-600">Todos los visitantes pueden ver tus artículos en la colección pública</p>
+                    </div>
+                </label>
+                
+                <label class="flex items-center space-x-3 p-4 border-2 rounded-lg cursor-pointer transition-all {% if not coleccion_publica %}border-primary bg-beige-light{% else %}border-gris-claro{% endif %}">
+                    <input type="radio" name="coleccion_publica" value="false" class="w-5 h-5"
+                           {% if not coleccion_publica %}checked{% endif %}>
+                    <div>
+                        <span class="font-semibold text-gray-800">Colección Privada</span>
+                        <p class="text-sm text-gray-600">Solo tú puedes ver tus artículos (puedes marcar artículos individuales como públicos)</p>
+                    </div>
+                </label>
+            </div>
+            
+            <div class="flex justify-between pt-4">
+                <a href="{{ url_for('inicio') }}" class="px-6 py-3 border-2 border-gris-claro rounded-lg hover:bg-gray-200 transition-all">
+                    Cancelar
+                </a>
+                <button type="submit" class="px-6 py-3 bg-primary text-beige-light rounded-lg hover:bg-gray-900 transition-all">
+                    Guardar configuración
+                </button>
+            </div>
+        </form>
+        
+        <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 class="font-semibold text-blue-800 mb-2 flex items-center">
+                <i class="bi bi-info-circle mr-2"></i> Información importante
+            </h3>
+            <ul class="text-sm text-blue-700 space-y-1 list-disc pl-5">
+                <li>Los artículos nuevos heredarán esta configuración por defecto</li>
+                <li>Puedes cambiar la visibilidad de artículos individuales desde la vista de cada artículo</li>
+                <li>Los artículos públicos aparecerán en la colección pública para todos los usuarios</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}{{ articulo.titulo }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="mb-4 text-sm text-gray-500">
+        <a href="{{ url_for('inicio') }}" class="hover:text-primary">Inicio</a> ›
+        <a href="{{ url_for('ver_coleccion') }}" class="hover:text-primary">Mi Colección</a> ›
+        <a href="{{ url_for('ver_coleccion_por_categoria', categoria=articulo.categoria|replace(' ', '_')) }}" class="hover:text-primary">
+            {{ articulo.categoria }}
+        </a> ›
+        <span class="text-gray-800">{{ articulo.titulo[:30] }}...</span>
+    </div>
+    
+    <div class="bg-white/70 rounded-xl border border-gris-claro shadow-md overflow-hidden">
+        <!-- Header -->
+        <div class="p-6 border-b border-gris-claro bg-beige-light flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-gray-800">{{ articulo.titulo }}</h1>
+            <div class="flex items-center space-x-2">
+                <span class="px-3 py-1 bg-primary text-beige-light rounded-full text-sm">{{ articulo.categoria }}</span>
+                
+                <!-- Indicador de público/privado -->
+                <span class="px-3 py-1 {% if articulo.publico %}bg-green-600 text-white{% else %}bg-gray-500 text-white{% endif %} rounded-full text-sm flex items-center">
+                    <i class="bi {% if articulo.publico %}bi-globe{% else %}bi-lock{% endif %} mr-1"></i>
+                    {% if articulo.publico %}Público{% else %}Privado{% endif %}
+                </span>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="p-6">
+            <div class="mb-6">
+                <h2 class="text-sm uppercase tracking-wider text-gray-500 mb-2">Resumen completo</h2>
+                <p class="text-gray-700 leading-relaxed">{{ articulo.resumen }}</p>
+            </div>
+            
+            {% if articulo.notas %}
+            <div class="mb-6 p-4 bg-beige-light rounded-lg border border-gris-claro">
+                <h2 class="text-sm uppercase tracking-wider text-gray-500 mb-2">
+                    <i class="bi bi-pencil-square mr-1"></i>Mis notas
+                </h2>
+                <p class="text-gray-700">{{ articulo.notas }}</p>
+            </div>
+            {% endif %}
+            
+            <div class="flex items-center justify-between text-sm text-gray-500 mb-6">
+                <span>
+                    <i class="bi bi-calendar"></i> 
+                    Guardado: {{ articulo.fecha_guardado.strftime('%d/%m/%Y %H:%M') if articulo.fecha_guardado else 'Fecha desconocida' }}
+                </span>
+                <a href="{{ articulo.url }}" target="_blank" class="text-primary hover:text-gray-900 transition-all">
+                    <i class="bi bi-box-arrow-up-right mr-1"></i> Ver en Wikipedia
+                </a>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="p-6 border-t border-gris-claro bg-beige-light flex justify-between">
+            <a href="{{ url_for('ver_coleccion_por_categoria', categoria=articulo.categoria|replace(' ', '_')) }}" 
+               class="px-4 py-2 border-2 border-gris-claro rounded-md hover:bg-gray-200 transition-all">
+                <i class="bi bi-arrow-left mr-1"></i> Volver
+            </a>
+            <div class="space-x-3">
+                <!-- Botón para cambiar público/privado -->
+                <form method="POST" action="{{ url_for('toggle_publico_articulo', id=articulo._id) }}" class="inline">
+                    <button type="submit" class="px-4 py-2 {% if articulo.publico %}bg-yellow-600 text-white hover:bg-yellow-700{% else %}bg-green-600 text-white hover:bg-green-700{% endif %} rounded-md transition-all">
+                        <i class="bi {% if articulo.publico %}bi-lock{% else %}bi-globe{% endif %} mr-1"></i>
+                        {% if articulo.publico %}Hacer privado{% else %}Hacer público{% endif %}
+                    </button>
+                </form>
+                
+                <a href="{{ url_for('editar_articulo', id=articulo._id) }}" 
+                   class="px-4 py-2 bg-beige-dark text-gray-800 rounded-md hover:bg-beige-light transition-all">
+                    <i class="bi bi-pencil mr-1"></i> Editar
+                </a>
+                <button onclick="openDeleteModal()" 
+                        class="px-4 py-2 bg-red-200 text-red-800 rounded-md hover:bg-red-300 transition-all">
+                    <i class="bi bi-trash mr-1"></i> Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal eliminar -->
+<div id="deleteModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50">
+    <div class="bg-beige-light rounded-xl max-w-md w-full p-6 border-2 border-gris-claro">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Confirmar eliminación</h3>
+        <p class="text-gray-600 mb-6">¿Eliminar <strong>"{{ articulo.titulo }}"</strong> de tu colección?</p>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeDeleteModal()" class="px-4 py-2 border-2 border-gris-claro rounded-md hover:bg-gray-200 transition-all">
+                Cancelar
+            </button>
+            <form method="POST" action="{{ url_for('eliminar_articulo', id=articulo._id) }}">
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-all">
+                    Eliminar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('hidden');
+    }
+    
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+    }
+</script>
+{% endblock %}

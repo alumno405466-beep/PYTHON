@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuración personalizada de Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2c2c2c',
+                        secondary: '#4a4a4a',
+                        beige: {
+                            light: '#f5f0e8',
+                            DEFAULT: '#e8ddd0',
+                            dark: '#d4c9bc',
+                        },
+                        gris: {
+                            claro: '#d4d4d4',
+                            medio: '#9ca3af',
+                            oscuro: '#4a4a4a',
+                        }
+                    },
+                    fontFamily: {
+                        'bricolage': ['Bricolage Grotesque', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts - Bricolage Grotesque -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Estilos personalizados adicionales -->
+    <style>
+        body {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            background-color: #f5f0e8;
+        }
+        .transition-all {
+            transition: all 0.2s ease;
+        }
+    </style>
+    
+    <title>{% block title %}Viquipedia{% endblock %}</title>
+</head>
+<body class="bg-beige-light text-gray-800 min-h-screen relative pb-24">
+    
+    <!-- NAVBAR -->
+    <nav class="bg-beige-light border-b-2 border-gris-claro py-4 mb-8">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo y marca -->
+                <a href="{{ url_for('inicio') }}" class="flex items-center space-x-3">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" 
+                         alt="Logo Viquipedia" 
+                         class="h-10 w-auto"
+                         onerror="this.style.display='none'">
+                    <span class="text-2xl font-bold text-gray-800 tracking-tight">Viquipedia</span>
+                </a>
+                
+                <!-- Botón móvil -->
+                <button class="lg:hidden text-gray-600 hover:text-gray-900" onclick="toggleMenu()">
+                    <i class="bi bi-list text-2xl"></i>
+                </button>
+                
+                <!-- Menú principal -->
+                <div class="hidden lg:flex lg:items-center lg:space-x-6" id="navbarMenu">
+                    <div class="flex items-center space-x-4">
+                        <a href="{{ url_for('inicio') }}" class="px-3 py-2 text-gray-700 hover:bg-beige-dark rounded-md transition-all">
+                            <i class="bi bi-house-door mr-1"></i> Inicio
+                        </a>
+                        
+                        <!-- Colección Pública (visible para todos) -->
+                        <a href="{{ url_for('ver_coleccion_publica') }}" class="px-3 py-2 text-gray-700 hover:bg-beige-dark rounded-md transition-all">
+                            <i class="bi bi-globe mr-1"></i> Colección Pública
+                        </a>
+                        
+                        {% if session.usuario_id %}
+                            <!-- Usuario logueado: puede ver su colección privada -->
+                            <a href="{{ url_for('ver_coleccion') }}" class="px-3 py-2 text-gray-700 hover:bg-beige-dark rounded-md transition-all">
+                                <i class="bi bi-collection mr-1"></i> Mi Colección
+                            </a>
+                            
+                            <a href="{{ url_for('buscar_wikipedia') }}" class="px-3 py-2 text-gray-700 hover:bg-beige-dark rounded-md transition-all">
+                                <i class="bi bi-search mr-1"></i> Buscar
+                            </a>
+                            
+                            <!-- Dropdown Categorías -->
+                            <div class="relative group">
+                                <button class="px-3 py-2 text-gray-700 hover:bg-beige-dark rounded-md transition-all flex items-center">
+                                    <i class="bi bi-tags mr-1"></i> Categorías
+                                    <i class="bi bi-chevron-down ml-1 text-sm"></i>
+                                </button>
+                                <div class="absolute left-0 mt-2 w-48 bg-beige-light border border-gris-claro rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                                    <a href="{{ url_for('nueva_categoria') }}" class="block px-4 py-2 text-gray-700 hover:bg-beige-dark">
+                                        <i class="bi bi-plus-circle mr-2"></i> Nueva categoría
+                                    </a>
+                                    <div class="border-t border-gris-claro my-1"></div>
+                                    <a href="{{ url_for('ver_coleccion') }}" class="block px-4 py-2 text-gray-700 hover:bg-beige-dark">
+                                        <i class="bi bi-collection mr-2"></i> Ver todas
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Menú usuario -->
+                    <div class="flex items-center space-x-3 ml-6 pl-6 border-l-2 border-gris-claro">
+                        {% if session.usuario_id %}
+                        <div class="relative group">
+                            <button class="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:bg-beige-dark rounded-md transition-all">
+                                <i class="bi bi-person-circle"></i>
+                                <span>{{ session.usuario_nombre }}</span>
+                                <i class="bi bi-chevron-down text-sm"></i>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-56 bg-beige-light border border-gris-claro rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                                <a href="{{ url_for('configurar_privacidad') }}" class="block px-4 py-2 text-gray-700 hover:bg-beige-dark">
+                                    <i class="bi bi-shield-lock mr-2"></i> Privacidad
+                                </a>
+                                <div class="border-t border-gris-claro my-1"></div>
+                                <a href="{{ url_for('logout') }}" class="block px-4 py-2 text-gray-700 hover:bg-beige-dark">
+                                    <i class="bi bi-box-arrow-right mr-2"></i> Cerrar Sesión
+                                </a>
+                            </div>
+                        </div>
+                        {% else %}
+                        <a href="{{ url_for('login') }}" class="px-4 py-2 bg-primary text-beige-light rounded-md hover:bg-gray-900 transition-all">
+                            <i class="bi bi-box-arrow-in-right mr-1"></i> Iniciar Sesión
+                        </a>
+                        <a href="{{ url_for('registro') }}" class="px-4 py-2 border-2 border-primary text-primary rounded-md hover:bg-primary hover:text-beige-light transition-all">
+                            <i class="bi bi-person-plus mr-1"></i> Registrarse
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="max-w-7xl mx-auto px-4">
+        <!-- Mensajes flash -->
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="mb-4 p-4 rounded-lg border 
+                        {% if categoria == 'success' %}bg-green-100 border-green-300 text-green-800
+                        {% elif categoria == 'danger' %}bg-red-100 border-red-300 text-red-800
+                        {% elif categoria == 'warning' %}bg-yellow-100 border-yellow-300 text-yellow-800
+                        {% else %}bg-blue-100 border-blue-300 text-blue-800{% endif %} 
+                        flex justify-between items-center">
+                        <span>{{ mensaje }}</span>
+                        <button type="button" class="text-gray-600 hover:text-gray-900" onclick="this.parentElement.remove()">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="absolute bottom-0 w-full bg-beige-light border-t-2 border-gris-claro py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-center space-x-3">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" 
+                     alt="Logo Viquipedia" 
+                     class="h-8 w-auto"
+                     onerror="this.style.display='none'">
+                <span class="text-gray-600">
+                    <strong class="text-gray-800">Viquipedia</strong> · 
+                    <i class="bi bi-c-circle"></i> 2026 · 
+                    <i class="bi bi-flask"></i> Hugo Díaz Rojas
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script para menú móvil -->
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('navbarMenu');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+            menu.classList.toggle('flex-col');
+            menu.classList.toggle('absolute');
+            menu.classList.toggle('top-20');
+            menu.classList.toggle('left-0');
+            menu.classList.toggle('right-0');
+            menu.classList.toggle('bg-beige-light');
+            menu.classList.toggle('p-4');
+            menu.classList.toggle('border-b-2');
+            menu.classList.toggle('border-gris-claro');
+            menu.classList.toggle('z-50');
+        }
+    </script>
+</body>
+</html>

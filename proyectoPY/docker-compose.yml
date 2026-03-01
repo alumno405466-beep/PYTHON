@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  db:
+    image: mongo:latest
+    container_name: mongodb_proyecto
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: proyecto_db
+    volumes:
+      - mongodb_data:/data/db
+
+  admin:
+    image: mongo-express:latest
+    container_name: mongo_express_proyecto
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password123
+      ME_CONFIG_MONGODB_SERVER: db
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+    depends_on:
+      - db
+
+  web:
+    build: .
+    container_name: flask_app_proyecto
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      MONGO_URI: "mongodb://admin:password123@db:27017/proyecto_db?authSource=admin"
+      FLASK_SECRET_KEY: "mi-clave-super-secreta-12345"
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+
+volumes:
+  mongodb_data:

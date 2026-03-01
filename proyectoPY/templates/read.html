@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Mi Colección{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Mi Colección de Wikipedia</h1>
+    <a href="{{ url_for('buscar_wikipedia') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Buscar nuevo
+    </a>
+</div>
+
+{% if articulos %}  <!-- Cambiado de 'comics' a 'articulos' -->
+<div class="row">
+    {% for articulo in articulos %}  <!-- Cambiado de 'comic' a 'articulo' -->
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">{{ articulo.titulo }}</h5>
+            </div>
+            <div class="card-body">
+                <span class="badge bg-info mb-2">{{ articulo.categoria }}</span>
+                <p class="card-text">{{ articulo.resumen[:200] }}...</p>
+                <p><small><a href="{{ articulo.url }}" target="_blank">Ver en Wikipedia</a></small></p>
+                
+                {% if articulo.notas %}
+                <div class="bg-light p-2 rounded">
+                    <strong>Mis notas:</strong><br>
+                    {{ articulo.notas }}
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('editar_articulo', id=articulo._id) }}" class="btn btn-warning btn-sm">
+                    Editar
+                </a>
+                <form method="POST" action="{{ url_for('eliminar_articulo', id=articulo._id) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" 
+                            onclick="return confirm('¿Eliminar de tu colección?')">
+                        Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    <h4>Tu colección está vacía</h4>
+    <p>Busca artículos en Wikipedia y guárdalos aquí.</p>
+    <a href="{{ url_for('buscar_wikipedia') }}" class="btn btn-primary">
+        Comenzar a buscar
+    </a>
+</div>
+{% endif %}
+{% endblock %}

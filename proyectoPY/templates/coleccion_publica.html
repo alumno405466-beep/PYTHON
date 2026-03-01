@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Colección Pública{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">
+            <i class="bi bi-globe mr-2"></i>Colección Pública
+        </h1>
+        <p class="text-gray-600">Artículos que los usuarios han decidido compartir públicamente</p>
+    </div>
+
+    {% if articulos %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for articulo in articulos %}
+            <div class="bg-white/70 rounded-xl border border-gris-claro shadow-sm hover:shadow-md transition-all overflow-hidden">
+                <div class="p-4 border-b border-gris-claro bg-beige-light">
+                    <h3 class="font-bold text-gray-800">{{ articulo.titulo }}</h3>
+                    <div class="flex items-center mt-2 text-sm text-gray-600">
+                        <i class="bi bi-person-circle mr-1"></i>
+                        <span>{{ articulo.usuario_nombre or 'Usuario' }}</span>
+                        <span class="mx-2">•</span>
+                        <i class="bi bi-tag mr-1"></i>
+                        <span>{{ articulo.categoria }}</span>
+                    </div>
+                </div>
+                
+                <div class="p-4">
+                    <p class="text-gray-600 text-sm">{{ articulo.resumen[:150] }}...</p>
+                    
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="text-xs text-gray-500">
+                            <i class="bi bi-calendar"></i> 
+                            {{ articulo.fecha_guardado.strftime('%d/%m/%Y') if articulo.fecha_guardado else 'Fecha desconocida' }}
+                        </span>
+                        <a href="{{ articulo.url }}" target="_blank" 
+                           class="text-primary hover:text-gray-900 transition-all text-sm">
+                            <i class="bi bi-box-arrow-up-right mr-1"></i> Ver en Wikipedia
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="px-4 pb-4">
+                    <div class="flex justify-end">
+                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                            <i class="bi bi-globe mr-1"></i> Público
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-12 bg-white/70 rounded-xl border border-gris-claro">
+            <i class="bi bi-inbox text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">No hay artículos públicos</h3>
+            <p class="text-gray-500">Los usuarios aún no han compartido artículos públicamente.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

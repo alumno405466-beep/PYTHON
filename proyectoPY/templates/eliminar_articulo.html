@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Eliminar Artículo{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h3>Confirmar eliminación</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    ¿Estás seguro de eliminar "<strong>{{ articulo.titulo }}</strong>" de tu colección?
+                </div>
+                
+                <form method="POST" action="{{ url_for('eliminar_articulo', id=articulo._id) }}">
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('ver_coleccion') }}" class="btn btn-secondary">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            Sí, eliminar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

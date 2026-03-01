@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Renombrar categoría{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+    <div class="bg-white/70 rounded-xl border border-gris-claro shadow-md p-8">
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">
+            <i class="bi bi-pencil mr-2"></i>Renombrar categoría
+        </h1>
+        <p class="text-gray-600 mb-6">Categoría actual: <span class="font-semibold">{{ categoria }}</span></p>
+        
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <div class="mb-6">
+                {{ form.nuevo_nombre.label(class="block text-gray-700 font-semibold mb-2") }}
+                {{ form.nuevo_nombre(class="w-full p-3 border-2 border-gris-claro rounded-lg focus:border-primary focus:outline-none bg-white") }}
+            </div>
+            
+            <div class="flex justify-between">
+                <a href="{{ url_for('ver_coleccion_por_categoria', nombre_categoria=categoria|replace(' ', '_')) }}" 
+                   class="px-6 py-3 border-2 border-gris-claro rounded-lg hover:bg-gray-200 transition-all font-semibold">
+                    <i class="bi bi-arrow-left mr-2"></i> Cancelar
+                </a>
+                {{ form.submit(class="px-6 py-3 bg-beige-dark text-gray-800 rounded-lg hover:bg-beige-light transition-all font-semibold cursor-pointer") }}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
